@@ -3,8 +3,10 @@ vgfontcsli
 
 Fork of the libvgfont that's packaged with Raspbian.
 
+Done:
+* Fixes in pull request already submitted to raspberrypi/firmware; fixes for calculating multiline text extents and displaying from negative pixel origins.
+
 Todo:
-* Fold in my fixes from chinasaur/firmware; fixes for calculating multiline text extents and displaying from negative pixel origins.
 * Fix font file loading so that it can search multiple directories and load multiple fonts.
 * Fix vgft draw_line so that it is not limited to 200 characters.  Should work just to while() the whole thing until the whole line is done?  Just need to peek ahead to get the kerning for the start of the next block of chars.
 * Check how high up in font size hinting is actually useful for and don't bother to cache above that?
