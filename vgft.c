@@ -261,9 +261,10 @@ static VGuint glyph_indices[CHAR_COUNT_MAX];
 static VGfloat adjustments_x[CHAR_COUNT_MAX];
 static VGfloat adjustments_y[CHAR_COUNT_MAX];
 
-// Draws the first char_count characters from text, with adjustments, starting from the current origin.
-// The last argument indicates whether to peek ahead and get a final adjustment based on the next
-// character past char_count, or else just assume that this is the end of the text and add no final
+// Draws the first char_count characters from text, with adjustments, starting 
+// from the current origin.  The peek argument indicates whether to peek ahead 
+// and get a final adjustment based on the next character past char_count, or 
+// else just assume that this is the end of the text and add no final 
 // adjustment.
 
 static void draw_chars(VGFT_FONT_T *font, const char *text, int char_count, VGbitfield paint_modes, int peek) {
@@ -289,6 +290,7 @@ static void draw_chars(VGFT_FONT_T *font, const char *text, int char_count, VGbi
    // Get the last adjustment?
    if (peek) {
       int peek_glyph_index = FT_Get_Char_Index(font->ft_face, text[i]);
+      if (!peek_glyph_index) { return; }
       if (FT_Get_Kerning(font->ft_face, prev_glyph_index, peek_glyph_index, FT_KERNING_DEFAULT, &kern)) assert(0);
       adjustments_x[char_count - 1] = float_from_26_6(kern.x);
       adjustments_y[char_count - 1] = float_from_26_6(kern.y);
@@ -297,15 +299,15 @@ static void draw_chars(VGFT_FONT_T *font, const char *text, int char_count, VGbi
       adjustments_y[char_count - 1] = 0.0f;
    }
 
-   // Draw!
    vgDrawGlyphs(font->vg_font, char_count, glyph_indices, adjustments_x, adjustments_y, paint_modes, VG_FALSE);
 }
 
-
-// Goes to the x,y position and draws arbitrary number of characters, draws iteratively if the char_count exceeds the max
-// buffer size given above.
+// Goes to the x,y position and draws arbitrary number of characters, draws 
+// iteratively if the char_count exceeds the max buffer size given above.
 
 static void draw_line(VGFT_FONT_T *font, VGfloat x, VGfloat y, const char *text, int char_count, VGbitfield paint_modes) {
+   if (char_count == 0) return;
+
    // Set origin to requested x,y
    VGfloat glor[] = { x, y };
    vgSetfv(VG_GLYPH_ORIGIN, 2, glor);
